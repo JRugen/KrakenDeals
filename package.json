@@ -1,0 +1,31 @@
+{
+  "name": "kraken-deals",
+  "version": "1.0.0",
+  "description": "Discord bot for KrakenKeys",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "deploy": "node deploy-commands.js",
+    "deploy:guild": "node deploy-commands-guild.js",
+    "clear:global": "node clear-commands.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "krakenkeys"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
