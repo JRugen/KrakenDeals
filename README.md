@@ -1,0 +1,2 @@
+# KrakenDeals
+KrakenKeys Discord Bot
