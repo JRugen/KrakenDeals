@@ -7,7 +7,7 @@ const axios = require('axios');
  * @returns {Promise<Object>} API response
  */
 async function getSteamDeals(preferences = {}, options = {}) {
-  const apiUrl = process.env.KRAKENKEYS_API_URL || 'https://api.krakenkeys.com';
+  const apiUrl = process.env.KRAKENKEYS_API_URL || 'https://krakenkeys.com/api/v1/discord';
 
   const params = {
     ...options,
@@ -23,11 +23,7 @@ async function getSteamDeals(preferences = {}, options = {}) {
   try {
     const response = await axios.get(`${apiUrl}/deals/steam`, {
       params,
-      headers: {
-        'Authorization': process.env.KRAKENKEYS_API_KEY ? `Bearer ${process.env.KRAKENKEYS_API_KEY}` : undefined,
-      },
     });
-    
     return response.data;
   } catch (error) {
     console.error('API Error:', error.message);
