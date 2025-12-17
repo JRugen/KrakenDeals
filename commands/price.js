@@ -156,7 +156,6 @@ module.exports = {
     await interaction.deferReply();
     
     try {
-      // Fetch game price data
       const priceData = await getGamePrice({
         game_name: gameName,
         server_id: serverId,
@@ -170,12 +169,7 @@ module.exports = {
         await interaction.editReply('❌ No price data found for this game.');
         return;
       }
-      
-      let discountText = '';
-      if (data.base_price && data.lowest_price) {
-        const discount = Math.round(((data.base_price - data.lowest_price) / data.base_price) * 100);
-        discountText = ` (${discount}% off)`;
-      }
+      const isFree = data.lowest_price === 0 && data.base_price === 0 && data.price_count === 0;
       
       const embed = new EmbedBuilder()
         .setTitle(gameName)
@@ -189,46 +183,47 @@ module.exports = {
         embed.setThumbnail(imageUrl);
       }
 
-
-
-      // Simple price display
-      let description = `**Lowest Price:** ${formatPrice(data.lowest_price, data.currency)}${discountText}\n`;
-      description += `**Base Price:** ${formatPrice(data.base_price, data.currency)}`;
-      
-      embed.setDescription(description);
-
-      // Cheapest prices section
-      if (data.cheapest_prices && data.cheapest_prices.length > 0) {
-        const topPrices = data.cheapest_prices.slice(0, 5);
-        const pricesList = topPrices.map((price, index) => {
-          return `[${price.provider_name}](${price.direct_link}) - ${formatPrice(price.price, data.currency)}`;
-        }).join('\n');
-        
-        // Add price count info after the prices list
-        const remainingPrices = data.price_count - topPrices.length;
-        let pricesFieldValue = pricesList;
-        if (remainingPrices > 0) {
-          pricesFieldValue += `\n\n*${remainingPrices} more price${remainingPrices !== 1 ? 's' : ''} available here: [${gameName}](${data.game_url})*`;
-        }
-        
-        embed.addFields({ 
-          name: 'Cheapest Prices', 
-          value: pricesFieldValue,
-          inline: false 
-        });
+      if (isFree) {
+        embed.setDescription('## 🎉 **FREE TO PLAY**\n\nThis game is available for free!');
       } else {
-        // If no cheapest prices, show price count here
-        embed.addFields({
-          name: 'Prices',
-          value: `**${data.price_count}** price${data.price_count !== 1 ? 's' : ''} available`,
-          inline: false
-        });
-      }
+        let discountText = '';
+        if (data.base_price && data.lowest_price && data.base_price > 0) {
+          const discount = Math.round(((data.base_price - data.lowest_price) / data.base_price) * 100);
+          discountText = ` (${discount}% off)`;
+        }
 
-      // Secondary information as a vertical list
+        let description = `**Lowest Price:** ${formatPrice(data.lowest_price, data.currency)}${discountText}\n`;
+        description += `**Base Price:** ${formatPrice(data.base_price, data.currency)}`;
+        
+        embed.setDescription(description);
+
+        if (data.cheapest_prices && data.cheapest_prices.length > 0) {
+          const topPrices = data.cheapest_prices.slice(0, 5);
+          const pricesList = topPrices.map((price, index) => {
+            return `[${price.provider_name}](${price.direct_link}) - ${formatPrice(price.price, data.currency)}`;
+          }).join('\n');
+          const remainingPrices = data.price_count - topPrices.length;
+          let pricesFieldValue = pricesList;
+          if (remainingPrices > 0) {
+            pricesFieldValue += `\n\n*${remainingPrices} more price${remainingPrices !== 1 ? 's' : ''} available here: [${gameName}](${data.game_url})*`;
+          }
+          
+          embed.addFields({ 
+            name: 'Cheapest Prices', 
+            value: pricesFieldValue,
+            inline: false 
+          });
+        } else if (data.price_count > 0) {
+          embed.addFields({
+            name: 'Prices',
+            value: `**${data.price_count}** price${data.price_count !== 1 ? 's' : ''} available\n[View all prices](${data.game_url})`,
+            inline: false
+          });
+        }
+      }
       const secondaryInfo = [];
       
-      if (data.historical_low) {
+      if (data.historical_low && data.historical_low.lowest_date) {
         const histLow = data.historical_low;
         const histDate = new Date(histLow.lowest_date).toLocaleDateString('en-GB', { 
           year: 'numeric', 

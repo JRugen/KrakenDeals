@@ -328,13 +328,6 @@ Contributions are welcome! This is an open-source project, and we appreciate any
 7. **Push to the branch** (`git push origin feature/SweetFeature`)
 8. **Open a Pull Request**
 
-### Code Style
-
-- Follow existing code style and patterns
-- Add comments for complex logic
-- Write tests for new features
-- Update documentation as needed
-
 ---
 
 ## Troubleshooting
