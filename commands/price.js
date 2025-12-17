@@ -169,7 +169,9 @@ module.exports = {
         await interaction.editReply('❌ No price data found for this game.');
         return;
       }
+      
       const isFree = data.lowest_price === 0 && data.base_price === 0 && data.price_count === 0;
+      const priceUnavailable = data.lowest_price === null && data.base_price === null && data.price_count === 0;
       
       const embed = new EmbedBuilder()
         .setTitle(gameName)
@@ -185,6 +187,8 @@ module.exports = {
 
       if (isFree) {
         embed.setDescription('## 🎉 **FREE TO PLAY**\n\nThis game is available for free!');
+      } else if (priceUnavailable) {
+        embed.setDescription('## ⚠️ **Price Data Unavailable**\n\nPrice information is currently not available for this game.');
       } else {
         let discountText = '';
         if (data.base_price && data.lowest_price && data.base_price > 0) {
