@@ -27,5 +27,8 @@
   },
   "devDependencies": {
     "jest": "^29.7.0"
+  },
+  "optionalDependencies": {
+    "pm2": "^5.3.0"
   }
 }
