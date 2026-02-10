@@ -21,6 +21,8 @@
 
 With easy to use slash commands and autocomplete search, your community can quickly discover the lowest prices, view historical pricing data, check Steam Deck compatibility, and see Steam reviews all in nicely formatted Discord embeds.
 
+[KrakenKeys](https://krakenkeys.com/)
+
 ---
 
 ## What is KrakenKeys?
