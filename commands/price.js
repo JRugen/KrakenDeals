@@ -144,11 +144,36 @@ module.exports = {
   },
   
   async execute(interaction) {
+    // Get server ID - try guild object first, then fallback to guildId
+    const serverId = interaction.guild?.id || interaction.guildId;
+    
+    // Check if we have a server ID at all
+    if (!serverId) {
+      console.error('Price command executed without guild context:', {
+        channelId: interaction.channelId,
+        guildId: interaction.guildId,
+        member: interaction.member ? 'present' : 'missing',
+        user: interaction.user?.tag
+      });
+      await interaction.reply({
+        content: '❌ This command can only be used in a server, not in direct messages. Please make sure the bot is properly added to the server with appropriate permissions.',
+        ephemeral: true
+      });
+      return;
+    }
+
     const gameValue = interaction.options.getString('game');
     const currencyOverride = interaction.options.getString('currency');
+
+    if (!gameValue.includes('|')) {
+      await interaction.reply({
+        content: '❌ Please select a game from the dropdown suggestions rather than typing one manually.',
+        ephemeral: true,
+      });
+      return;
+    }
+
     const [igdbId, gameName] = gameValue.split('|');
-    
-    const serverId = interaction.guild.id;
     const prefs = await getServerPreferences(serverId);
     const currency = currencyOverride || prefs.currency || 'GBP';
     const keyshopsEnabled = prefs.allowKeyshops !== false;
