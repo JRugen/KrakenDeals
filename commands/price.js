@@ -165,15 +165,21 @@ module.exports = {
     const gameValue = interaction.options.getString('game');
     const currencyOverride = interaction.options.getString('currency');
 
-    if (!gameValue.includes('|')) {
-      await interaction.reply({
-        content: '❌ Please select a game from the dropdown suggestions rather than typing one manually.',
-        ephemeral: true,
-      });
-      return;
+    let igdbId, gameName;
+    if (gameValue.includes('|')) {
+      [igdbId, gameName] = gameValue.split('|');
+    } else {
+      const results = await searchGames(gameValue);
+      if (!results.length) {
+        await interaction.reply({
+          content: `❌ No games found for **${gameValue}**. Please try a different search term, or use the auto suggestion.`,
+          ephemeral: true,
+        });
+        return;
+      }
+      igdbId = results[0].igdb_id;
+      gameName = results[0].name;
     }
-
-    const [igdbId, gameName] = gameValue.split('|');
     const prefs = await getServerPreferences(serverId);
     const currency = currencyOverride || prefs.currency || 'GBP';
     const keyshopsEnabled = prefs.allowKeyshops !== false;
