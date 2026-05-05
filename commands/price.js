@@ -18,8 +18,6 @@ async function searchGames(query) {
     return response.data.games || [];
   } catch (error) {
     console.error('Error searching games:', error.message);
-    console.log(apiUrl);
-    console.log(query);
     if (error.response) {
       console.error('API Response:', error.response.data);
     }

@@ -14,7 +14,7 @@ async function getSteamDeals(preferences = {}, options = {}) {
   };
 
   if (preferences.allowKeyshops === false) {
-    params.keyshops = true;
+    params.keyshops = false;
   }
   if (preferences.currency) {
     params.currency = preferences.currency;
